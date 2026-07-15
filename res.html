@@ -14,36 +14,45 @@
     }
     
     iframe {
-      width: 100vw;
-      height: 100vh;
+      /* 
+        To zoom in by 1.25x (125%), we make the iframe physically 80% of the screen size 
+        first (100 / 1.25 = 80), then blow it up with scale(1.25). 
+        This prevents scrollbars and keeps things perfectly filling the screen.
+      */
+      width: 80vw;
+      height: 80vh;
       border: none;
       
       /* THE ZOOM TRICK */
-      /* 1.25 equals a 25% zoom. */
       transform: scale(1.25); 
       
-      /* This tells the browser to zoom from the top left corner */
+      /* Tells the browser to zoom from the top left corner */
       transform-origin: top left; 
     }
   </style>
 </head>
 
 <body>
+  <!-- 
+    Using the htmlembed link ensures a clean UI without standard Google banners 
+    and allows the refresh script to bypass the cache.
+  -->
   <iframe 
     id="sheetFrame"
-    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false">
+    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false&chrome=false">
   </iframe>
   
   <script>
-    // This script forces the iframe to reload just the sheet data every 15 seconds.
+    // This script forces the iframe to reload its data every 10 seconds
     setInterval(function() {
       var iframe = document.getElementById('sheetFrame');
-      var baseUrl = "https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false";
       
-      // The '&t=' + timestamp trick forces the player to fetch new data 
-      // instead of loading an old, cached version of the sheet.
-      iframe.src = baseUrl + '&t=' + new Date().getTime();
-    }, 15000); // 15000 milliseconds = 15 seconds. Change this number if you want it faster or slower.
+      // We isolate the base URL before our cache-busting parameter
+      var currentSrc = iframe.src.split('&t=')[0]; 
+      
+      // Appending the timestamp forces Google to send the absolute freshest data 
+      iframe.src = currentSrc + '&t=' + new Date().getTime();
+    }, 10000); // 10000 milliseconds = 10 seconds
   </script>
 </body>
 </html>
