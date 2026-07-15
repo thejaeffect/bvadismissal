@@ -1,9 +1,59 @@
-<header>
-  <title>
-    RES Bus Dimissal
-  </title>
-</header>
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Hide everything outside the viewing window */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: #ffffff; 
+        }
 
+        /* The container crops out the top and bottom Google banners */
+        .crop-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 
+           This pushes the iframe up by 55 pixels to hide the top "unsupported" banner,
+           and adds 55px to the height so it still fills the screen.
+        */
+        iframe { 
+            border: none; 
+            width: 100%; 
+            height: calc(100% + 120px); /* Extra height to cover the top/bottom cropped areas */
+            position: absolute;
+            top: -55px; /* Pushes the top banner off-screen */
+            left: 0;
+        }
+    </style>
+</head>
 <body>
-  <iframe src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/edit?gid=0#gid=0" height="1000" width="1000"></iframe>
+    <div class="crop-container">
+        <iframe id="sheet-frame" src=""></iframe>
+    </div>
+
+    <script>
+        // REPLACE THE URL BELOW WITH YOUR GOOGLE SHEET "PUBLISH TO THE WEB" LINK
+        const baseUrl = "docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/pubhtml?widget=false&chrome=false&headers=false";
+
+        function refreshSheet() {
+            // Adds a timestamp to bypass Google's 5-minute caching
+            const timestampBypass = "&t=" + new Date().getTime();
+            document.getElementById("sheet-frame").src = baseUrl + timestampBypass;
+        }
+
+        // Load immediately on open
+        refreshSheet();
+
+        // Refresh the iframe inside the page every 10 seconds (10000 ms)
+        setInterval(refreshSheet, 10000); 
+    </script>
 </body>
+</html>
