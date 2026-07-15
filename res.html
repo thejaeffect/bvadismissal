@@ -19,19 +19,31 @@
       border: none;
       
       /* THE ZOOM TRICK */
-      /* 1.25 equals a 25% zoom. 1.5 would be 50%, 1.1 would be 10%. */
+      /* 1.25 equals a 25% zoom. */
       transform: scale(1.25); 
       
-      /* This tells the browser to zoom from the top left corner, 
-         keeping your grid in place and pushing the empty space away. */
+      /* This tells the browser to zoom from the top left corner */
       transform-origin: top left; 
     }
   </style>
 </head>
 
 <body>
-  <iframe src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false">
+  <iframe 
+    id="sheetFrame"
+    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false">
   </iframe>
-    <script>
+  
+  <script>
+    // This script forces the iframe to reload just the sheet data every 15 seconds.
+    setInterval(function() {
+      var iframe = document.getElementById('sheetFrame');
+      var baseUrl = "https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false";
+      
+      // The '&t=' + timestamp trick forces the player to fetch new data 
+      // instead of loading an old, cached version of the sheet.
+      iframe.src = baseUrl + '&t=' + new Date().getTime();
+    }, 15000); // 15000 milliseconds = 15 seconds. Change this number if you want it faster or slower.
+  </script>
 </body>
 </html>
