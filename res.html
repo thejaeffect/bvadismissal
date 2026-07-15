@@ -34,16 +34,5 @@
     src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false">
   </iframe>
   
-  <script>
-    // This script forces the iframe to reload just the sheet data every 15 seconds.
-    setInterval(function() {
-      var iframe = document.getElementById('sheetFrame');
-      var baseUrl = "https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false";
-      
-      // The '&t=' + timestamp trick forces the player to fetch new data 
-      // instead of loading an old, cached version of the sheet.
-      iframe.src = baseUrl + '&t=' + new Date().getTime();
-    }, 15000); // 15000 milliseconds = 15 seconds. Change this number if you want it faster or slower.
-  </script>
 </body>
 </html>
