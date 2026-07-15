@@ -1,15 +1,41 @@
-<header>
-  <title>
-    RES Bus Dimissal
-  </title>
-</header>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RES Bus Dismissal</title>
+  <style>
+    /* This CSS ensures the iframe takes up the exact size of the TV screen 
+       with no white margins, borders, or accidental scrollbars. */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
 
 <body>
-  <iframe src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/edit?gid=0#gid=0"
-      height="100%"
-      width="100%"
-      border="none"
-      bgcolor="ffffff"
-    >
+  <iframe 
+    id="sheetFrame" 
+    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=true&headers=false">
   </iframe>
+
+  <script>
+    // This script forces the iframe to reload its data every 30 seconds
+    // mimicking a real-time update without relying on Google's heavy editing UI.
+    setInterval(function() {
+      var iframe = document.getElementById('sheetFrame');
+      // Adding a unique timestamp prevents the browser from loading old, cached data
+      var currentSrc = iframe.src.split('&t=')[0]; 
+      iframe.src = currentSrc + '&t=' + new Date().getTime();
+    }, 30000); // 30000 milliseconds = 30 seconds. Adjust this number if needed.
+  </script>
 </body>
+</html>
