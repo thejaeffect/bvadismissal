@@ -1,41 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>RES Bus Dismissal</title>
-  <style>
-    /* This CSS ensures the iframe takes up the exact size of the TV screen 
-       with no white margins, borders, or accidental scrollbars. */
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      background-color: #ffffff;
-    }
-    iframe {
-      width: 100vw;
-      height: 100vh;
-      border: none;
-    }
-  </style>
+    <style>
+        /* Hide everything outside the viewing window */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: #ffffff; 
+        }
+
+        /* The container crops out the top and bottom Google banners */
+        .crop-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 
+           This pushes the iframe up by 55 pixels to hide the top "unsupported" banner,
+           and adds 55px to the height so it still fills the screen.
+        */
+        iframe { 
+            border: none; 
+            width: 100%; 
+            height: calc(100% + 120px); /* Extra height to cover the top/bottom cropped areas */
+            position: absolute;
+            top: -55px; /* Pushes the top banner off-screen */
+            left: 0;
+        }
+    </style>
 </head>
-
 <body>
-  <iframe 
-    id="sheetFrame" 
-    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=true&headers=false">
-  </iframe>
+    <div class="crop-container">
+        <iframe id="sheet-frame" src=""></iframe>
+    </div>
 
-  <script>
-    // This script forces the iframe to reload its data every 30 seconds
-    // mimicking a real-time update without relying on Google's heavy editing UI.
-    setInterval(function() {
-      var iframe = document.getElementById('sheetFrame');
-      // Adding a unique timestamp prevents the browser from loading old, cached data
-      var currentSrc = iframe.src.split('&t=')[0]; 
-      iframe.src = currentSrc + '&t=' + new Date().getTime();
-    }, 30000); // 30000 milliseconds = 30 seconds. Adjust this number if needed.
-  </script>
+    <script>
+        // REPLACE THE URL BELOW WITH YOUR GOOGLE SHEET "PUBLISH TO THE WEB" LINK
+        const baseUrl = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/pubhtml?widget=false&chrome=false&headers=false";
+
+        function refreshSheet() {
+            // Adds a timestamp to bypass Google's 5-minute caching
+            const timestampBypass = "&t=" + new Date().getTime();
+            document.getElementById("sheet-frame").src = baseUrl + timestampBypass;
+        }
+
+        // Load immediately on open
+        refreshSheet();
+
+        // Refresh the iframe inside the page every 10 seconds (10000 ms)
+        setInterval(refreshSheet, 10000); 
+    </script>
 </body>
 </html>
