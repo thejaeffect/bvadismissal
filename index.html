@@ -3,28 +3,34 @@
 <head>
   <title>RES Bus Dismissal</title>
   <style>
-    /* This CSS ensures the iframe takes up the exact size of the TV screen 
-       with no white margins, borders, or accidental scrollbars. */
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
       width: 100%;
       overflow: hidden;
-      background-color: #ffffff;
+      /* Setting this to black so any remaining tiny slivers blend in perfectly */
+      background-color: #000000; 
     }
+    
     iframe {
-      width: 1000vw;
-      height: 1000vh;
+      width: 100vw;
+      height: 100vh;
       border: none;
+      
+      /* THE ZOOM TRICK */
+      /* 1.25 equals a 25% zoom. 1.5 would be 50%, 1.1 would be 10%. */
+      transform: scale(1.25); 
+      
+      /* This tells the browser to zoom from the top left corner, 
+         keeping your grid in place and pushing the empty space away. */
+      transform-origin: top left; 
     }
   </style>
 </head>
 
 <body>
-  <iframe 
-    id="sheetFrame" 
-    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=true&headers=false">
+  <iframe src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=true&headers=false">
   </iframe>
 </body>
 </html>
