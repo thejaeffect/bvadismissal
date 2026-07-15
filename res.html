@@ -9,50 +9,77 @@
       height: 100%;
       width: 100%;
       overflow: hidden;
-      /* Setting this to black so any remaining tiny slivers blend in perfectly */
       background-color: #000000; 
     }
     
-    iframe {
-      /* 
-        To zoom in by 1.25x (125%), we make the iframe physically 80% of the screen size 
-        first (100 / 1.25 = 80), then blow it up with scale(1.25). 
-        This prevents scrollbars and keeps things perfectly filling the screen.
-      */
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Both iframes stack on top of each other */
+    .sheet-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 80vw;
       height: 80vh;
       border: none;
       
       /* THE ZOOM TRICK */
       transform: scale(1.25); 
-      
-      /* Tells the browser to zoom from the top left corner */
       transform-origin: top left; 
+      
+      /* We use opacity to hide/show them seamlessly */
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.4s ease-in-out; /* Smooth fade effect during transition */
+    }
+
+    /* This class is applied to whichever iframe is currently active */
+    .sheet-frame.active {
+      opacity: 1;
+      z-index: 2;
     }
   </style>
 </head>
 
 <body>
-  <!-- 
-    Using the htmlembed link ensures a clean UI without standard Google banners 
-    and allows the refresh script to bypass the cache.
-  -->
-  <iframe 
-    id="sheetFrame"
-    src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false&chrome=false">
-  </iframe>
+  <div class="iframe-container">
+    <!-- Two identical iframes stacked on top of each other -->
+    <iframe id="iframe1" class="sheet-frame active" src="https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false&chrome=false"></iframe>
+    <iframe id="iframe2" class="sheet-frame" src=""></iframe>
+  </div>
   
   <script>
-    // This script forces the iframe to reload its data every 10 seconds
+    const baseUrl = "https://docs.google.com/spreadsheets/d/17GIAVZ2I8xfgC8BJISBw-Txe3exPO_7odPa4XNxJjTY/htmlembed?widget=false&headers=false&chrome=false";
+    
+    let activeIframe = document.getElementById('iframe1');
+    let standbyIframe = document.getElementById('iframe2');
+
     setInterval(function() {
-      var iframe = document.getElementById('sheetFrame');
+      // 1. Generate the fresh URL with cache-busting timestamp
+      const freshUrl = baseUrl + '&t=' + new Date().getTime();
       
-      // We isolate the base URL before our cache-busting parameter
-      var currentSrc = iframe.src.split('&t=')[0]; 
+      // 2. Load the fresh data into the hidden background (standby) iframe
+      standbyIframe.src = freshUrl;
       
-      // Appending the timestamp forces Google to send the absolute freshest data 
-      iframe.src = currentSrc + '&t=' + new Date().getTime();
-    }, 10000); // 10000 milliseconds = 10 seconds
+      // 3. Wait until the background iframe is 100% finished loading
+      standbyIframe.onload = function() {
+        // Swap visibility classes
+        standbyIframe.classList.add('active');
+        activeIframe.classList.remove('active');
+        
+        // Swap roles: standby becomes active, active becomes standby
+        const temp = activeIframe;
+        activeIframe = standbyIframe;
+        standbyIframe = temp;
+        
+        // Clear this onload listener so it doesn't trigger again accidentally
+        activeIframe.onload = null;
+      };
+    }, 10000); // Refresh check every 10 seconds
   </script>
 </body>
 </html>
